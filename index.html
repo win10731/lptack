@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPTack - Multiplayer Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="authScreen" class="screen active">
+        <div class="glass-container">
+            <div class="logo">
+                <h1>LPTack</h1>
+                <p>Multiplayer Tic-Tac-Toe</p>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <h2>Welcome Back</h2>
+                <form id="loginFormElement">
+                    <div class="input-group">
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Sign In</button>
+                </form>
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="showSignup">Sign Up</a>
+                </p>
+                <div id="authError" class="error-message"></div>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <h2>Create Account</h2>
+                <form id="signupFormElement">
+                    <div class="input-group">
+                        <input type="text" id="signupName" placeholder="Display Name" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="signupUsername" placeholder="Username (unique)" required pattern="[a-zA-Z0-9_]{3,20}">
+                        <small>3-20 characters, letters, numbers, and underscores only</small>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="signupEmail" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="signupPassword" placeholder="Password" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                </form>
+                <p class="auth-switch">
+                    Already have an account? <a href="#" id="showLogin">Sign In</a>
+                </p>
+                <div id="signupError" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+        <div class="game-container">
+            <!-- Header -->
+            <header class="game-header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <span id="userInitial">U</span>
+                    </div>
+                    <div class="user-details">
+                        <span id="userName">Player</span>
+                        <button id="logoutBtn" class="btn-logout">Logout</button>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="themeToggle" class="btn-icon" title="Change Theme">🎨</button>
+                    <button id="friendsBtn" class="btn-icon" title="Friends">👥</button>
+                </div>
+            </header>
+
+            <!-- Game Lobby -->
+            <div id="lobby" class="lobby-section">
+                <div class="glass-panel">
+                    <h2>Play Game</h2>
+                    <div class="lobby-options">
+                        <button id="findGameBtn" class="btn-primary">Find Match</button>
+                        <button id="createRoomBtn" class="btn-secondary">Create Room</button>
+                        <button id="joinRoomBtn" class="btn-secondary">Join Room</button>
+                        <button id="playFriendBtn" class="btn-secondary">Play with Friend</button>
+                    </div>
+                    <div id="waitingMessage" class="waiting-message hidden">
+                        <p>Waiting for opponent...</p>
+                        <div class="spinner"></div>
+                    </div>
+                    <div id="roomSection" class="room-section hidden">
+                        <div class="room-code-display">
+                            <p>Room Code:</p>
+                            <div class="room-code" id="roomCode">----</div>
+                            <button id="copyRoomCode" class="btn-icon-small">📋</button>
+                        </div>
+                        <p class="room-info">Share this code with your friend to join</p>
+                    </div>
+                    <div id="joinRoomSection" class="join-room-section hidden">
+                        <div class="input-group">
+                            <input type="text" id="roomCodeInput" placeholder="Enter Room Code" maxlength="6">
+                        </div>
+                        <button id="joinRoomCodeBtn" class="btn-primary">Join</button>
+                        <button id="cancelJoinRoomBtn" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Board -->
+            <div id="gameBoard" class="game-section hidden">
+                <div class="glass-panel">
+                    <div class="game-info">
+                        <div class="player-info">
+                            <div class="player-card">
+                                <div class="player-avatar">
+                                    <span id="player1Initial">X</span>
+                                </div>
+                                <span id="player1Name">Player 1</span>
+                                <div id="player1Turn" class="turn-indicator">Your Turn</div>
+                            </div>
+                            <div class="vs-divider">VS</div>
+                            <div class="player-card">
+                                <div class="player-avatar">
+                                    <span id="player2Initial">O</span>
+                                </div>
+                                <span id="player2Name">Player 2</span>
+                                <div id="player2Turn" class="turn-indicator">Waiting</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="board-container">
+                        <div class="board" id="board">
+                            <div class="cell" data-index="0"></div>
+                            <div class="cell" data-index="1"></div>
+                            <div class="cell" data-index="2"></div>
+                            <div class="cell" data-index="3"></div>
+                            <div class="cell" data-index="4"></div>
+                            <div class="cell" data-index="5"></div>
+                            <div class="cell" data-index="6"></div>
+                            <div class="cell" data-index="7"></div>
+                            <div class="cell" data-index="8"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="gameStatus" class="game-status"></div>
+                    <button id="newGameBtn" class="btn-secondary hidden">New Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Friends Modal -->
+    <div id="friendsModal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Friends</h2>
+                <button id="closeFriendsModal" class="btn-icon">✕</button>
+            </div>
+            <div class="friends-tabs">
+                <button class="tab-btn active" data-tab="friends">Friends</button>
+                <button class="tab-btn" data-tab="add">Add Friend</button>
+                <button class="tab-btn" data-tab="requests">Requests</button>
+            </div>
+            <div class="tab-content active" id="friendsTab">
+                <div id="friendsList" class="friends-list"></div>
+            </div>
+            <div class="tab-content" id="addFriendTab">
+                <div class="input-group">
+                    <input type="text" id="searchUsername" placeholder="Search by username">
+                </div>
+                <button id="searchFriendBtn" class="btn-primary">Search</button>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <div class="tab-content" id="requestsTab">
+                <div id="friendRequestsList" class="friends-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Selector -->
+    <div id="themeModal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Choose Theme</h2>
+                <button id="closeThemeModal" class="btn-icon">✕</button>
+            </div>
+            <div class="themes-grid">
+                <div class="theme-option" data-theme="dark">
+                    <div class="theme-preview dark-theme"></div>
+                    <span>Dark</span>
+                </div>
+                <div class="theme-option" data-theme="light">
+                    <div class="theme-preview light-theme"></div>
+                    <span>Light</span>
+                </div>
+                <div class="theme-option" data-theme="purple">
+                    <div class="theme-preview purple-theme"></div>
+                    <span>Purple</span>
+                </div>
+                <div class="theme-option" data-theme="green">
+                    <div class="theme-preview green-theme"></div>
+                    <span>Green</span>
+                </div>
+                <div class="theme-option" data-theme="blue">
+                    <div class="theme-preview blue-theme"></div>
+                    <span>Blue</span>
+                </div>
+                <div class="theme-option" data-theme="orange">
+                    <div class="theme-preview orange-theme"></div>
+                    <span>Orange</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-content">
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
